@@ -1,0 +1,41 @@
+{
+    "name": "hwkdo/llama-parse-laravel",
+    "description": "LlamaParse-Client für Laravel",
+    "keywords": [
+        "hwkdo",
+        "laravel",
+        "llama-parse",
+        "llamaindex"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hwkdo",
+            "email": "doit@hwk-do.de",
+            "role": "Developer"
+        }
+    ],    
+    "require": {
+        "php": "^8.3",
+        "illuminate/http": "^12.0||^13.0",
+        "illuminate/support": "^12.0||^13.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hwkdo\\LlamaParseLaravel\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hwkdo\\LlamaParseLaravel\\LlamaParseLaravelServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
