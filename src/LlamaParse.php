@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hwkdo\LlamaParseLaravel;
 
+use Hwkdo\LlamaParseLaravel\Enums\LlamaParseTier;
 use Hwkdo\LlamaParseLaravel\Exceptions\LlamaParseException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -16,9 +17,9 @@ class LlamaParse
         return $this->apiKey() !== '';
     }
 
-    public function parse(string $contents, string $filename): string
+    public function parse(string $contents, string $filename, LlamaParseTier|string|null $tier = null): string
     {
-        $jobId = $this->start($contents, $filename);
+        $jobId = $this->start($contents, $filename, $this->resolveTier($tier));
         $deadline = microtime(true) + max(1, (int) config('llama-parse-laravel.timeout_seconds', 300));
 
         while (true) {
@@ -48,10 +49,26 @@ class LlamaParse
         }
     }
 
-    private function start(string $contents, string $filename): string
+    private function resolveTier(LlamaParseTier|string|null $tier): string
+    {
+        if ($tier instanceof LlamaParseTier) {
+            return $tier->value;
+        }
+
+        $value = trim((string) ($tier ?? config('llama-parse-laravel.tier', LlamaParseTier::CostEffective->value)));
+        if (LlamaParseTier::tryFrom($value) === null) {
+            $allowed = implode(', ', array_column(LlamaParseTier::cases(), 'value'));
+
+            throw new LlamaParseException('Unbekannter LlamaParse-Tier „'.$value.'“. Erlaubt: '.$allowed.'.');
+        }
+
+        return $value;
+    }
+
+    private function start(string $contents, string $filename, string $tier): string
     {
         $configuration = json_encode([
-            'tier' => (string) config('llama-parse-laravel.tier', 'agentic'),
+            'tier' => $tier,
             'version' => (string) config('llama-parse-laravel.version', 'latest'),
         ], JSON_THROW_ON_ERROR);
 

@@ -6,4 +6,6 @@ namespace Hwkdo\LlamaParseLaravel\Exceptions;
 
 use RuntimeException;
 
-class LlamaParseException extends RuntimeException {}
+class LlamaParseException extends RuntimeException
+{
+}
